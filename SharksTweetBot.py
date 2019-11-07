@@ -75,9 +75,34 @@ class SharksTweetBot:
         tweet = article_name + '\n' + article_link
         self.client.update_status(tweet)
 
+    # Follows any follower that the bot is currently not following
+    def follow_followers(self):
+        for follower in tweepy.Cursor(self.api.followers).items():
+            status = self.api.show_friendship(source_screen_name=self.api.me().screen_name, target_screen_name=follower.screen_name)
+            if status == False:
+                follower.follow()
+                print(follower.screen_name)
+            else:
+                print("Already follow " + follower.screen_name)
+
+    # Favorites tweets that contain x in hashtags
+    # Count = number of recent tweets to scan
+    def like_hashtags(self, hashtags):
+        for hashtag in hashtags:
+            hashtag = '#' + hashtag
+            for tweet in tweepy.Cursor(self.api.search, q=hashtag, count=10, include_entities=True).items(10):
+                username = tweet.user.name
+                try:
+                    self.api.create_favorite(tweet.id)
+                    print("Gave a like to " + username)
+                except:
+                    print("Already liked " + username + "'s tweet.")
+
 # Entry point
 def lambda_handler(_event_json, _context):
     bot = SharksTweetBot()
     containers = bot.get_containers()
     result = bot.scan_containers(containers)
+    bot.follow_followers()
     print(result)
+    bot.like_hashtags(['SharksTweetBot'])
