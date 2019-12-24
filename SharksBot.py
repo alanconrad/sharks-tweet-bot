@@ -47,6 +47,20 @@ class SharksTweetBot(TweetBot):
                 articles.add([article_name, article_link])
         return articles
 
+    # Retweets a tweet if it detects the tweet contains both the hashtag and keyword
+    # keywords: string
+    # hashtag: string
+    # num_tweets: int number of tweets to get. MAX -> 100
+    def retweet_tweets(self, hashtag, keyword, num_tweets):
+        num_retweets = 0
+        for tweet in tweepy.Cursor(self.api.search, q=hashtag, count=num_tweets, include_entities=True).items(num_tweets):
+            if keyword in tweet.text:
+                self.api.retweet(tweet.id)
+                print("Retweeted tweet id: " + tweet.id)
+                num_retweets += 1
+        result = "Number of tweets retweeted: " + str(num_retweets)
+        return result
+
 # Entry point
 def main():
     url = "https://www.nhl.com/sharks/news"
