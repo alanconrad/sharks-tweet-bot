@@ -44,7 +44,7 @@ class SharksTweetBot(TweetBot):
                     break
             # Tweet if no previous tweet contained the article_name
             if tweeted == False:
-                articles.add([article_name, article_link])
+                articles.append([article_name, article_link])
         return articles
 
     # Retweets a tweet if it detects the tweet contains both the hashtag and keyword
