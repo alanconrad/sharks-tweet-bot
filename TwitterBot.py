@@ -42,6 +42,8 @@ class TweetBot:
     # Tweets inputted article name and link
     def tweet_articles(self, articles):
         for article in articles:
+            article_name = article[0]
+            article_link = article[1]
             tweet = article_name + '\n' + article_link
             self.client.update_status(tweet)
         result = str(len(articles)) + " number of articles tweeted."
